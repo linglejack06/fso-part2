@@ -29,9 +29,18 @@ function App() {
       alert(`${newName} is already in the phonebook`)
       return;
     }
-    setPersons(persons.concat({name: newName, number: newNumber}));
-    setNewName('');
-    setNewNumber('');
+    personService.addPerson({name: newName, number: newNumber})
+      .then((data) => {
+        setPersons(persons.concat(data))
+        setNewName('');
+        setNewNumber('');
+      })
+  }
+  const handleDelete = (id) => {
+    personService.deletePerson(id)
+      .then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
   }
   return (
     <div>
@@ -40,7 +49,7 @@ function App() {
       <h2>Add a new</h2>
       <AddForm name={newName} number={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} handleSubmit={handleSubmit} />
       <h2>Numbers</h2>
-      <PersonList personsToShow={personsToShow} />
+      <PersonList personsToShow={personsToShow} handleDelete={handleDelete} />
     </div>
   )
 }
