@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Filter from './components/Filter';
 import AddForm from './components/AddForm';
 import PersonList from './components/PersonList'
+import personService from './services/personService'
 
 function App() {
   const [persons, setPersons] = useState([])
@@ -9,9 +10,8 @@ function App() {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
   useEffect(() => {
-    fetch('http://localhost:3000/persons')
-      .then((response) => response.json())
-      .then((data) => setPersons(data))
+    personService.getAll()
+      .then((data) => setPersons(data));
   }, [])
   const personsToShow = persons.filter((person) => person.name.toLowerCase().includes(filter.toLowerCase()));
   const handleNameChange = (e) => {
