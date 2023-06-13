@@ -1,26 +1,16 @@
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import Note from './components/Note';
 
 const App = () => {
-  const [notes, setNotes] = useState([
-    {
-      id: 1,
-      content: 'HTML is easy',
-      important: true
-    },
-    {
-      id: 2,
-      content: 'Browser can execute only JavaScript',
-      important: false
-    },
-    {
-      id: 3,
-      content: 'GET and POST are the most important methods of HTTP protocol',
-      important: true
-    }
-  ]);
+  const promise = fetch('http://localhost:3000/notes');
+  const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('a new note...');
   const [showAll, setShowAll] = useState(true);
+  useEffect(() => {
+    fetch('http://localhost:3000/notes')
+      .then((response) => response.json())
+      .then((data) => setNotes(data));
+  }, []) //empty array causes this effect to only be ran along with first render
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
   const addNote = (e) => {
     e.preventDefault();
