@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import Note from './components/Note';
+import noteService from './services/notes';
 
 const App = () => {
-  const promise = fetch('http://localhost:3000/notes');
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('a new note...');
   const [showAll, setShowAll] = useState(true);
   useEffect(() => {
-    fetch('http://localhost:3000/notes')
-      .then((response) => response.json())
-      .then((data) => setNotes(data));
+    noteService.getAll()
+      .then((initialData) => setNotes(initialData));
   }, []) //empty array causes this effect to only be ran along with first render
   const notesToShow = showAll ? notes : notes.filter((note) => note.important);
   const addNote = (e) => {
@@ -17,14 +16,28 @@ const App = () => {
     const noteObject = {
       content: newNote,
       important: Math.random < 0.5,
-      id: notes.length + 1,
     }
-    setNotes(notes.concat(noteObject));
-    setNewNote('');
+    noteService.create(noteObject)
+      .then((data) => {
+        setNotes(notes.concat(data));
+        setNewNote('');
+      });
   }
   const handleNoteChange = (e) => {
-    console.log(e.target.value);
     setNewNote(e.target.value);
+  }
+  const toggleImportanceOf = (id) => {
+    const note = notes.find((note) => note.id === id)
+    const changedNote = {
+      ...note,
+      important: !note.important
+    }
+    noteService.update(id, changedNote)
+      .then((data) => setNotes(notes.map(note => note.id !== id ? note : data)))
+      .catch(() => {
+        alert(`The note ${note.content} was already deleted from server`);
+        setNotes(notes.filter((note) => note.id !== id));
+      })
   }
   return (
     <div>
@@ -34,7 +47,7 @@ const App = () => {
       </button>
       <ul>
         {notesToShow.map((note) => (
-          <Note {...note} key={note.id} />
+          <Note note={note} toggleImportance={() => toggleImportanceOf(note.id)} key={note.id} />
         ))}
       </ul>
       <form onSubmit={addNote}>
