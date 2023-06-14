@@ -21,8 +21,7 @@ function App() {
   }
   const handleSubmit = (e) => {
     e.preventDefault();
-    const filter = new RegExp(search, 'i');
-    setFilteredCountries(countries.filter((country) => filter.test(country.name.common)));
+    setFilteredCountries(countries.filter((country) => country.name.common.includes(search) || country.name.official.includes(search)));
   }
   return (
     <div className='app'>
