@@ -13,5 +13,9 @@ const deletePerson = async (id) => {
   const request = await axios.delete(`${BASIC_URL}/${id}`);
   return request.data;
 }
-const personServices = { getAll, addPerson, deletePerson, };
+const update = async (id, updatedPerson) => {
+  const request = await axios.put(`${BASIC_URL}/${id}`, updatedPerson);
+  return request.data
+}
+const personServices = { getAll, addPerson, deletePerson, update, };
 export default personServices;

@@ -26,8 +26,22 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already in the phonebook`)
-      return;
+      if(window.confirm(`${newName} is already in  the phonebook, would you like to replace the old number with a new one?`)) {
+        const editPerson = persons.find((person) => person.name === newName);
+        const updatedPerson = {
+          ...editPerson,
+          number: newNumber,
+        }
+        personService.update(updatedPerson.id, updatedPerson)
+          .then((data) => {
+            setPersons(persons.map((person) => person.id !== updatedPerson.id ? person : data))
+            setNewName('');
+            setNewNumber('');
+          });
+        return;
+      } else {
+        return;
+      }
     }
     personService.addPerson({name: newName, number: newNumber})
       .then((data) => {
