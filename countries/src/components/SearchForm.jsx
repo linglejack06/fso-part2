@@ -1,8 +1,7 @@
-const SearchForm = ({ search, handleChange, handleSubmit }) => {
+const SearchForm = ({ search, handleChange }) => {
   return (
-    <form className='search-form' onSubmit={handleSubmit}>
+    <form className='search-form'>
       <input value={search} onChange={handleChange} />
-      <button type='submit'>Search</button>
     </form>
   )
 }
