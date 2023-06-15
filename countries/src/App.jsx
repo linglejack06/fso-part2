@@ -12,6 +12,9 @@ function App() {
     countryService.getCountries()
       .then((data) => setCountries(data));
   }, [])
+  useEffect(() => {
+    setFilteredCountries(countries);
+  }, [countries])
   const handleChange = (e) => {
     setSearch(e.target.value);
     setFilteredCountries(countries.filter((country) => country.name.common.toLowerCase().includes(search.toLowerCase()) || country.name.official.toLowerCase().includes(search.toLowerCase())));
@@ -19,7 +22,7 @@ function App() {
   return (
     <div className='app'>
       <SearchForm search={search} handleChange={handleChange}/>
-      {filteredCountries.length > 1 ? (
+      {(filteredCountries.length !== 1) ? (
         <Countries countries={filteredCountries} />
       ) : (
         <LargeCountryCard country={filteredCountries[0]} />
